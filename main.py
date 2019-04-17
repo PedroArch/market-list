@@ -4,13 +4,17 @@ import os
 import webapp2
 import jinja2
 
-
+# Getting the template directory
 template_dir = os.path.join(os.path.dirname(__file__), 'templates')
-jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir))
 
+# Starting the Jinja2 Environment
+jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),
+                                autoescape=True)
 
+# Main Handler
 class Handler(webapp2.RequestHandler):
 
+    # shortcut for writing the outputs easily
     def write(self, *a, **kw):
         self.response.out.write(*a, **kw)
 
@@ -21,19 +25,12 @@ class Handler(webapp2.RequestHandler):
     def render(self, template, **kw):
         self.write(self.render_str(template,**kw))
 
-
+# Main Page Handler
 class MainPage(Handler):
     def get(self):
-        self.render("shopping_list.html")
+        items = self.request.get_all("item")
+        self.render("shopping_list.html", items = items)
 
-
-class FizzBuzzHandler(Handler):
-    def get(self):
-        n = self.request.get('n', 0)
-        n = n and int(n)
-        self.render("fizzbuzz.html", n = n)
-
-
+# Webserver start
 app = webapp2.WSGIApplication([('/',  MainPage),
-                               ('/fizzbuzz', FizzBuzzHandler),
                                ], debug=True)
