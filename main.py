@@ -18,10 +18,12 @@ class Handler(webapp2.RequestHandler):
     def write(self, *a, **kw):
         self.response.out.write(*a, **kw)
 
+    # transform html file in a string to render
     def render_str(self, template, **params):
         t = jinja_env.get_template(template)
         return t.render(params)
 
+    # render the page
     def render(self, template, **kw):
         self.write(self.render_str(template,**kw))
 
@@ -30,6 +32,8 @@ class MainPage(Handler):
     def get(self):
         items = self.request.get_all("item")
         self.render("shopping_list.html", items = items)
+
+# End of File
 
 # Webserver start
 app = webapp2.WSGIApplication([('/',  MainPage),
